@@ -3,6 +3,6 @@ Using a custom username and password. One can login and enter the location to se
 
 Login details:
 Username- demo
-Password- password
+,Password- password
 
 This is my first project. Yaay ! :)
