@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styleit.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital@1&family=Poppins:wght@300&display=swap" rel="stylesheet">
+    <title>Weather App Page</title>
+</head>
+<body>
+    <header>
+        <div class="img"><img id="logo" src="logo.png" alt="Weather Api Logo"></div>
+        </header>
+        <div class="toggle-switch">
+            <button class="btn" id="Faren">ºF</button><button class='btn' id="Cel">ºC</button>
+        </div>
+        <div class="search">
+            <input type="text" placeholder="Enter City/Country" spellcheck="false">
+            <button><img src="images/search.png"></button>
+        </div>
+        <div class="error">
+            <p>Invalid City/Country name</p>
+        </div>
+        <div class="disp"><p>New York</p></div>
+     <div class="card">
+       <div class="location">
+        <p></p>
+       </div>
+        <div class="weather">
+            <div class="daily">
+            <img src="icons/Sunny.png" class="weather-icon" alt="">
+            <p class="descrip"></p>
+            </div>
+            <div class="details">
+                <div class="col">
+                    <!-- <img src="/images/wind.png" alt=""> -->
+                    <div>
+                        <p class="wind">15 km/h</p>
+                        <!-- <p>Wind Speed</p> -->
+                    </div>
+                </div>
+                <div class="col">
+                    <!-- <img src="/images/humidity.png" alt=""> -->
+                    <div>
+                        <p class="precip">0.2 mm</p>
+                        <!-- <p>Precipitation </p> -->
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <!-- <img src="/images/humidity.png" alt=""> -->
+                    <div>
+                        <p class="pressure">10 mb</p>
+                        <!-- <p>Pressure</p> -->
+                    </div>
+                </div>
+                <h1 class="temp">22ºc</h1>
+            </div>
+             <h2 class="city"></h2>
+        <!-- <div class="fiv">
+            <div class="one">
+                <p class="first"></p>
+                <img class="weather-icon1" src="">
+                <p class="temp1"></p>
+                </div>
+                <div class="two">
+                    <p class="second"></p>
+                    <img class="weather-icon2" src="">
+                    <p id="temp2"></p>
+                    </div>
+                    <div class="three">
+                        <p class="third"></p>
+                        <img class="weather-icon3" src="">
+                        <p class="temp3"></p>
+                        </div>
+                        <div class="four">
+                            <p class="fourth"></p>
+                            <img class="weather-icon4" src="">
+                            <p class="temp4"></p>
+                            </div>
+                            <div class="five">
+                                <p class="fifth"></p>
+                                <img class="weather-icon5" src="">
+                                <p class="temp5"></p>
+                                </div>
+        </div> -->
+        </div>
+     </div>
+     <script>
+        const apiKey="b3847e94a56f42cc837154518230408";
+        const apiUrl="http://api.weatherapi.com/v1/forecast.json?&days=5&aqi=no&alerts=no&q=";
+        const searchBox=document.querySelector(".search input");
+        const searchBtn= document.querySelector(".search button");
+        const weatherIcon= document.querySelector(".weather-icon");
+        const fBtn=document.getElementById("Faren");
+        const cBtn=document.getElementById("Cel");
+        const DaysOfWeek=[
+                "Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"
+            ];
+        var x= 0;
+        async function checkWeather(city){
+            const response= await fetch(apiUrl + city + `&key=${apiKey}`);
+            if(response.status== 400){
+                document.querySelector(".error").style.display="block";
+                document.querySelector(".card").style.display="none";
+            }
+            else {
+            var data= await response.json();
+            console.log(data);
+            // document.querySelector(".city").innerHTML=data.location.name;
+            if(cBtn.style.background="#f07a7a"){
+                fBtn.addEventListener('click',function changecol(){
+                fBtn.style.background="#f07a7a";
+                cBtn.style.background="#ffffff";
+                document.querySelector(".temp").innerHTML= Math.round(data.forecast.forecastday[x].day.avgtemp_f) + "ºf"; 
+            })
+        }
+
+            if(fBtn.style.background="#ffffff"){
+                cBtn.addEventListener('click',function changecol(){
+                fBtn.style.background="#ffffff";
+                cBtn.style.background="#f07a7a";
+                document.querySelector(".temp").innerHTML= Math.round(data.forecast.forecastday[x].day.avgtemp_c) + "ºc";
+            })
+            }
+            document.querySelector(".precip").innerHTML= "Precip:\t" + data.forecast.forecastday[x].day.totalprecip_mm + " mm" ;
+            document.querySelector(".pressure").innerHTML="Pressure:\t" + data.forecast.forecastday[x].hour[12].pressure_mb + " mb";
+            document.querySelector(".wind").innerHTML= "Wind:\t" + data.forecast.forecastday[x].hour[12].wind_kph + " kmph";
+            // weatherIcon.src =data.forecast.forecastday[0].hour[12].condition.icon;
+            // const countryName= data.location.country;
+        
+            document.querySelector(".disp").innerHTML="<b>" + data.location.name + "\t Weather Forecast \t</b>" + data.location.region +",\t"+ data.location.country; 
+            document.querySelector(".descrip").innerHTML=data.forecast.forecastday[x].hour[12].condition.text;
+            if(data.forecast.forecastday[x].hour[12].condition.text=="Sunny"){
+                weatherIcon.src="icons/Sunny.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Partly cloudy"){
+                weatherIcon.src="icons/Partly cloudy.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Cloudy"){
+                weatherIcon.src="icons/Cloudy.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Overcast"){
+                weatherIcon.src="icons/Overcast.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Mist"){
+                weatherIcon.src="icons/Mist.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Patchy rain possible"){
+                weatherIcon.src="icons/Patchy rain possible.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Patchy snow possible"){
+                weatherIcon.src="icons/Patchy snow possible.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Patchy sleet possible"){
+                weatherIcon.src="icons/Patchy sleet possible.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Patchy freezing drizzle possible"){
+                weatherIcon.src="icons/Patchy freezing drizzle possible.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Thundery outbreaks possible"){
+                weatherIcon.src="icons/Thundery outbreaks possible.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Blowing snow"){
+                weatherIcon.src="icons/Blowing snow.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Blizzard"){
+                weatherIcon.src="icons/Blizzard.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Fog"){
+                weatherIcon.src="icons/Fog.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Freezing fog"){
+                weatherIcon.src="icons/Freezing fog.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Patchy light drizzle"){
+                weatherIcon.src="icons/Patchy light drizzle.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Light drizzle"){
+                weatherIcon.src="icons/Light drizzle.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Freezing drizzle"){
+                weatherIcon.src="icons/Freezing drizzle.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Heavy freezing drizzle"){
+                weatherIcon.src="icons/Heavy freezing drizzle.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Patchy light rain"){
+                weatherIcon.src="icons/Patchy light rain.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Light rain"){
+                weatherIcon.src="icons/Light rain.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Moderate rain at times"){
+                weatherIcon.src="icons/Moderate rain at times.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Moderate rain"){
+                weatherIcon.src="icons/Moderate rain.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Heavy rain at times"){
+                weatherIcon.src="icons/Heavy rain at times.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Heavy rain"){
+                weatherIcon.src="icons/Heavy rain.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Light freezing rain"){
+                weatherIcon.src="icons/Light freezing rain.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Moderate or heavy freezing rain"){
+                weatherIcon.src="icons/Moderate or heavy freezing rain.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Light sleet"){
+                weatherIcon.src="icons/Light sleet.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Moderate or heavy sleet"){
+                weatherIcon.src="icons/Moderate or heavy sleet.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Patchy light snow"){
+                weatherIcon.src="icons/Patchy light snow.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Light snow"){
+                weatherIcon.src="icons/Light snow.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Patchy moderate snow"){
+                weatherIcon.src="icons/Patchy moderate snow.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Moderate snow"){
+                weatherIcon.src="icons/Moderate snow.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Patchy heavy snow"){
+                weatherIcon.src="icons/Patchy heavy snow.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Heavy snow"){
+                weatherIcon.src="icons/Heavy snow.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Ice pellets"){
+                weatherIcon.src="icons/Ice pellets.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Light rain shower"){
+                weatherIcon.src="icons/Light rain shower.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Moderate or heavy rain shower"){
+                weatherIcon.src="icons/Moderate or heavy rain shower.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Torrential rain shower"){
+                weatherIcon.src="icons/Torrential rain shower.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Light sleet showers"){
+                weatherIcon.src="icons/Light sleet showers.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Moderate or heavy sleet showers"){
+                weatherIcon.src="icons/Moderate or heavy sleet showers.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Light snow showers"){
+                weatherIcon.src="icons/Light snow showers.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Moderate or heavy snow showers"){
+                weatherIcon.src="icons/Moderate or heavy snow showers.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Light showers of ice pellets"){
+                weatherIcon.src="icons/Light showers of ice pellets.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Moderate or heavy showers of ice pellets"){
+                weatherIcon.src="icons/Moderate or heavy showers of ice pellets.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Patchy light rain with thunder"){
+                weatherIcon.src="icons/Patchy light rain with thunder.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Moderate or heavy rain with thunder"){
+                weatherIcon.src="icons/Moderate or heavy rain with thunder.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Patchy light snow with thunder"){
+                weatherIcon.src="icons/Patchy light snow with thunder.png";
+            }
+            else if(data.forecast.forecastday[x].hour[12].condition.text=="Moderate or heavy snow with thunder"){
+                weatherIcon.src="icons/Moderate or heavy snow with thunder.png";
+            }
+
+            // const weatherIcon1=document.querySelector(".weather-icon1");
+            // const weatherIcon2=document.querySelector(".weather-icon2");
+            // const weatherIcon3=document.querySelector(".weather-icon3");
+            // const weatherIcon4=document.querySelector(".weather-icon4");
+            // const weatherIcon5=document.querySelector(".weather-icon5");
+            // var date= data.forecast.forecastday[x+1];
+            // console.log(date);
+            // var date=new Date();
+            // var day=date.getDay();
+            // var day=day+1;
+            // console.log(day);
+        //     document.querySelector(".first").innerHTML=`${DaysOfWeek[day]}`;
+        //     day=day+1;
+        //     if(data.forecast.forecastday[x+1].hour[12].condition.text=="Sunny"){
+        //         weatherIcon1.src="icons/Sunny.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Partly cloudy"){
+        //         weatherIcon1.src="icons/Partly cloudy.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Cloudy"){
+        //         weatherIcon1.src="icons/Cloudy.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Overcast"){
+        //         weatherIcon1.src="icons/Overcast.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Mist"){
+        //         weatherIcon1.src="icons/Mist.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Patchy rain possible"){
+        //         weatherIcon1.src="icons/Patchy rain possible.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Patchy snow possible"){
+        //         weatherIcon1.src="icons/Patchy snow possible.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Patchy sleet possible"){
+        //         weatherIcon1.src="icons/Patchy sleet possible.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Patchy freezing drizzle possible"){
+        //         weatherIcon1.src="icons/Patchy freezing drizzle possible.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Thundery outbreaks possible"){
+        //         weatherIcon1.src="icons/Thundery outbreaks possible.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Blowing snow"){
+        //         weatherIcon1.src="icons/Blowing snow.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Blizzard"){
+        //         weatherIcon1.src="icons/Blizzard.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Fog"){
+        //         weatherIcon1.src="icons/Fog.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Freezing fog"){
+        //         weatherIcon1.src="icons/Freezing fog.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Patchy light drizzle"){
+        //         weatherIcon1.src="icons/Patchy light drizzle.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Light drizzle"){
+        //         weatherIcon1.src="icons/Light drizzle.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Freezing drizzle"){
+        //         weatherIcon1.src="icons/Freezing drizzle.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Heavy freezing drizzle"){
+        //         weatherIcon1.src="icons/Heavy freezing drizzle.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Patchy light rain"){
+        //         weatherIcon1.src="icons/Patchy light rain.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Light rain"){
+        //         weatherIcon1.src="icons/Light rain.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Moderate rain at times"){
+        //         weatherIcon1.src="icons/Moderate rain at times.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Moderate rain"){
+        //         weatherIcon1.src="icons/Moderate rain.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Heavy rain at times"){
+        //         weatherIcon1.src="icons/Heavy rain at times.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Heavy rain"){
+        //         weatherIcon1.src="icons/Heavy rain.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Light freezing rain"){
+        //         weatherIcon1.src="icons/Light freezing rain.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Moderate or heavy freezing rain"){
+        //         weatherIcon1.src="icons/Moderate or heavy freezing rain.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Light sleet"){
+        //         weatherIcon1.src="icons/Light sleet.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Moderate or heavy sleet"){
+        //         weatherIcon1.src="icons/Moderate or heavy sleet.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Patchy light snow"){
+        //         weatherIcon1.src="icons/Patchy light snow.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Light snow"){
+        //         weatherIcon1.src="icons/Light snow.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Patchy moderate snow"){
+        //         weatherIcon1.src="icons/Patchy moderate snow.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Moderate snow"){
+        //         weatherIcon1.src="icons/Moderate snow.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Patchy heavy snow"){
+        //         weatherIcon1.src="icons/Patchy heavy snow.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Heavy snow"){
+        //         weatherIcon1.src="icons/Heavy snow.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Ice pellets"){
+        //         weatherIcon1.src="icons/Ice pellets.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Light rain shower"){
+        //         weatherIcon1.src="icons/Light rain shower.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Moderate or heavy rain shower"){
+        //         weatherIcon1.src="icons/Moderate or heavy rain shower.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Torrential rain shower"){
+        //         weatherIcon1.src="icons/Torrential rain shower.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Light sleet showers"){
+        //         weatherIcon1.src="icons/Light sleet showers.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Moderate or heavy sleet showers"){
+        //         weatherIcon1.src="icons/Moderate or heavy sleet showers.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Light snow showers"){
+        //         weatherIcon1.src="icons/Light snow showers.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Moderate or heavy snow showers"){
+        //         weatherIcon1.src="icons/Moderate or heavy snow showers.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Light showers of ice pellets"){
+        //         weatherIcon1.src="icons/Light showers of ice pellets.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Moderate or heavy showers of ice pellets"){
+        //         weatherIcon1.src="icons/Moderate or heavy showers of ice pellets.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Patchy light rain with thunder"){
+        //         weatherIcon1.src="icons/Patchy light rain with thunder.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Moderate or heavy rain with thunder"){
+        //         weatherIcon1.src="icons/Moderate or heavy rain with thunder.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Patchy light snow with thunder"){
+        //         weatherIcon1.src="icons/Patchy light snow with thunder.png";
+        //     }
+        //     else if(data.forecast.forecastday[x+1].hour[12].condition.text=="Moderate or heavy snow with thunder"){
+        //         weatherIcon1.src="icons/Moderate or heavy snow with thunder.png";
+        //     }
+
+        //     document.getElementById('temp1').innerHTML= Math.round(data.forecast.forecastday[x+1].day.avgtemp_c) + "ºc";
+        //     if(cBtn.style.background="#f07a7a"){
+        //         fBtn.addEventListener('click',function changecol(){
+        //         fBtn.style.background="#f07a7a";
+        //         cBtn.style.background="#ffffff";
+        //         document.getElementById(".temp1").innerHTML= Math.round(data.forecast.forecastday[x+1].day.avgtemp_f) + "ºf"; 
+        //     })
+        // }
+
+        //     if(fBtn.style.background="#ffffff"){
+        //         cBtn.addEventListener('click',function changecol(){
+        //         fBtn.style.background="#ffffff";
+        //         cBtn.style.background="#f07a7a";
+        //         document.getElementById(".temp1").innerHTML= Math.round(data.forecast.forecastday[x+1].day.avgtemp_c) + "ºc";
+        //     })
+        //     }
+
+
+       
+            
+            // document.querySelector(".three").innerHTML=`${DaysOfWeek[day]}`;
+            // day=day+1;
+            // document.querySelector(".four").innerHTML=`${DaysOfWeek[day]}`;
+            // day=day+1;
+            // document.querySelector(".five").innerHTML=`${DaysOfWeek[day]}`;
+            
+
+
+            document.querySelector(".card").style.display="block";
+            document.querySelector(".error").style.display="none";
+            document.querySelector(".disp").style.display="block";
+        }
+    }
+        searchBtn.addEventListener("click",()=>{
+            checkWeather(searchBox.value);
+            })
+        
+        
+     </script>
+</body>
+</html>

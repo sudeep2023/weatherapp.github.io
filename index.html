@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital@1&display=swap" rel="stylesheet">
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Rubik:400,700'>
+<title>Login Page</title>
+</head>
+<body>
+    <header>
+        <div class="img"><img id="logo" src="logo.png" alt="Weather Api Logo"></div>
+        <h1> Welcome to Weather Api </h1>
+        <div class="container">
+        <form id="login-form">
+            <div class="content">
+                <div class="input-field">
+                    <input type="text" placeholder="Username" id="username" name="username" required>
+                </div>
+                <div class="input-field">
+                    <input type="password" placeholder="Password" id="password" name="password" required>
+                </div>
+                <div id="errormessages" style="color: red;"></div>
+                <div class="login">
+                <button type="submit">Login</button>
+            </div>
+            </div>
+        </form>
+        
+    </div>
+    </header>
+    <script>const loginform= document.getElementById('login-form');
+            loginform.addEventListener('submit',validateform);
+            function validateform(event){
+                event.preventDefault();
+                const username=document.getElementById('username');
+                const password= document.getElementById('password');
+                const errorMsg=document.getElementById("errormessages");
+                errorMsg.innerHTML='';
+                
+               if((username.value)=="demo" && (password.value)=="password")
+                {
+                    errorMsg.innerHTML='';
+                    alert('Login Successful !');
+                    window.location.href="weatherapp.html";
+                    // setTimeout(function MyFunc(){window.loaction.href="test.html"});
+                }
+                
+                    else{
+                        errorMsg.innerHTML+='<p>Invalid username/password</p>';
+                         return;
+                    }
+            }
+    </script>
+</body>
+</html>
